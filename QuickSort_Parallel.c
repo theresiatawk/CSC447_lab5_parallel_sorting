@@ -88,11 +88,16 @@ void quicksort(void)
     int my_index;
     int q;    /* Split point in array */
 
-    while (unfinished_index >= 0) {
-        my_index = unfinished_index;
-        unfinished_index--;
-        first = unfinished[my_index].first;
-        last = unfinished[my_index].last;
+
+#pragma omp parallel reduction(-, unfinished_index)
+    {
+        while (unfinished_index >= 0) {
+            my_index = unfinished_index;
+            unfinished_index--;
+            first = unfinished[my_index].first;
+            last = unfinished[my_index].last;
+
+        }
         while (first < last) {
 
             /* Split unsorted array into two parts */
