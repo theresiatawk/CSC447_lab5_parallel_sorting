@@ -81,17 +81,19 @@ int partition(int first, int last)
    gets the indices of another unsorted sub-array from the stack. The
    function continues until the stack is empty. */
 
-void quicksort(void)
+void quicksort(int size)
 {
     int first;
     int last;
+    int total;
     int my_index;
     int q;    /* Split point in array */
 
 
-#pragma omp parallel reduction(-, unfinished_index)
+#pragma omp parallel shared (total)
     {
-        while (unfinished_index >= 0) {
+        while (unfinished_index >= 0 || total < size) {
+#pragma omp critical
             if (unfinished_index >= 0) {
                 my_index = unfinished_index;
                 unfinished_index--;
@@ -110,11 +112,18 @@ void quicksort(void)
                 printf("Stack overflow\n");
                 exit(-1);
             }
-#pragma omp parallel reduction(+, unfinished_index) 
+#pragma omp parallel reduction (+, unfinished_index) 
             {
                 unfinished_index++;
                 unfinished[unfinished_index].first = q + 1;
                 unfinished[unfinished_index].last = last;
+            }
+
+            if (last > q + 1) {
+                total += (last - (q + 1)) + 1;
+            }
+            else {
+                total += ((q + 1) - last) + 1;
             }
 
             /* Keep lower portion for next iteration of loop */
@@ -190,7 +199,7 @@ int main(int argc, char* argv[])
     unfinished_index = 0;
 
     clock_t time_start = clock();
-    quicksort();
+    quicksort(n);
     clock_t time_end = clock();
 
     double time_spent = ((double)(time_end - time_start) / CLOCKS_PER_SEC) * 1000.0;
