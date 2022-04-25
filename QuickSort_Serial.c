@@ -16,6 +16,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define MAX_UNFINISHED 1000   /* Maximum number of unsorted sub-arrays */
 
@@ -160,7 +161,14 @@ int main(int argc, char* argv[])
     unfinished[0].first = 0;
     unfinished[0].last = n - 1;
     unfinished_index = 0;
+
+    clock_t time_start = clock();
     quicksort();
+    clock_t time_end = clock();
+
+    double time_spent = ((double)(time_end - time_start) / CLOCKS_PER_SEC) * 1000.0;
+    printf("The execution time of serial quick sort using stack is %fms\n", time_spent);
+
     /*
        print_float_array (A, n);
     */
