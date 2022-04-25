@@ -141,20 +141,33 @@ int verify_sorted(float* A, int n)
 int main(int argc, char* argv[])
 {
     int    i;
-    int    seed;             /* Seed component input by user */
-    unsigned short xi[3];    /* Random number seed */
 
-    if (argc != 3) {
-        printf("Command-line syntax: %s <n> <seed>\n", argv[0]);
-        exit(-1);
-    }
-    seed = atoi(argv[2]);
-    xi[0] = xi[1] = xi[2] = seed;
 
-    n = atoi(argv[1]);
-    A = (float*)malloc(n * sizeof(float));
+    // Randomize array compnent input 
+
+    srand(time(NULL));
+
     for (i = 0; i < n; i++)
-        A[i] = erand48(xi);
+    {
+        A[i] = rand() % 10000;
+    }
+
+    // int    seed;             /* Seed component input by user */
+    // unsigned short xi[3];    /* Random number seed */
+
+    // if (argc != 3) {
+    //     printf("Command-line syntax: %s <n> <seed>\n", argv[0]);
+    //     exit(-1);
+    // }
+    // seed = atoi(argv[2]);
+    // xi[0] = xi[1] = xi[2] = seed;
+
+    // n = atoi(argv[1]);
+    // A = (float*)malloc(n * sizeof(float));
+    // for (i = 0; i < n; i++)
+    //     A[i] = erand48(xi);
+
+
     /*
        print_float_array (A, n);
     */
