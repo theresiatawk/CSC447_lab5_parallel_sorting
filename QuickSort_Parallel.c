@@ -92,10 +92,12 @@ void quicksort(void)
 #pragma omp parallel reduction(-, unfinished_index)
     {
         while (unfinished_index >= 0) {
-            my_index = unfinished_index;
-            unfinished_index--;
-            first = unfinished[my_index].first;
-            last = unfinished[my_index].last;
+            if (unfinished_index >= 0) {
+                my_index = unfinished_index;
+                unfinished_index--;
+                first = unfinished[my_index].first;
+                last = unfinished[my_index].last;
+            }
 
         }
         while (first < last) {
@@ -108,9 +110,12 @@ void quicksort(void)
                 printf("Stack overflow\n");
                 exit(-1);
             }
-            unfinished_index++;
-            unfinished[unfinished_index].first = q + 1;
-            unfinished[unfinished_index].last = last;
+#pragma omp parallel reduction(+, unfinished_index) 
+            {
+                unfinished_index++;
+                unfinished[unfinished_index].first = q + 1;
+                unfinished[unfinished_index].last = last;
+            }
 
             /* Keep lower portion for next iteration of loop */
             last = q - 1;
