@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <omp.h>
 
 #define MAX_UNFINISHED 1000   /* Maximum number of unsorted sub-arrays */
 
@@ -60,11 +61,14 @@ int partition(int first, int last)
 
     x = A[last];
     i = first - 1;
-    for (j = first; j < last; j++)
-        if (A[j] <= x) {
-            i++;
-            swap(&A[i], &A[j]);
-        }
+#pragma omp parallel reduction(+, i)
+    {
+        for (j = first; j < last; j++)
+            if (A[j] <= x) {
+                i++;
+                swap(&A[i], &A[j]);
+            }
+    }
     swap(&A[i + 1], &A[last]);
     return (i + 1);
 }
@@ -141,17 +145,17 @@ int verify_sorted(float* A, int n)
 int main(int argc, char* argv[])
 {
     int    i;
-    
-    
+
+
     // Randomize array compnent input 
-    
+
     srand(time(NULL));
-   
-   for (i = 0; i < n; i++)
-   {
-      A[i] = rand()%10000;
-   }
-   
+
+    for (i = 0; i < n; i++)
+    {
+        A[i] = rand() % 10000;
+    }
+
     // int    seed;             /* Seed component input by user */
     // unsigned short xi[3];    /* Random number seed */
 
@@ -166,8 +170,8 @@ int main(int argc, char* argv[])
     // A = (float*)malloc(n * sizeof(float));
     // for (i = 0; i < n; i++)
     //     A[i] = erand48(xi);
-    
-    
+
+
     /*
        print_float_array (A, n);
     */
